@@ -1,12 +1,12 @@
-#include <enum.h>
+#include "enum.h"
 
 struct no {
-    char *nome;
-    bool fila;
-    enum Prioridades prior;
-    enum Gosto beber;
-    enum Gosto cantar;
-    no *link;
+    string nome;   //Nome do Anao
+    bool fila;    //define para qual fila o Anao vai
+    enum Prioridades prior;   //Prioridade dos Anoes
+    enum Gosto beber;   //Define o nivel do gosto que o Anao tem por bebida
+    enum Gosto cantar;  //Define o nivel do gosto que o Anao tem por karaoke
+    no *link;   //Aponta pro próximo nó da fila
 };
 
 no *inicializaFP(no *L)
@@ -15,7 +15,7 @@ no *inicializaFP(no *L)
     return L;
 }
 
-no *insereFP(no *L, char *valor, enum Prioridades prior, bool fila)
+no *insereFP(no *L, string valor, enum Prioridades prior, bool fila, Gosto beber, Gosto cantar)
 {
     no *N, *P, *ANT;
 
@@ -23,6 +23,8 @@ no *insereFP(no *L, char *valor, enum Prioridades prior, bool fila)
     N->nome = valor;
     N->prior = prior;
     N->fila = fila;
+    N->beber = beber;
+    N->cantar = cantar;
 
     if (L == NULL) {
         L = N;
@@ -47,12 +49,15 @@ no *insereFP(no *L, char *valor, enum Prioridades prior, bool fila)
     return L;
 }
 
-no *removeFP(no *L, char *valor, int * prior) {
+no *removeFP(no *L, string *valor, Prioridades *prior, Gosto *beber, Gosto *cantar, bool *fila) {
 	no *AUX;
 
 	if (L != NULL) {
-		valor = L->nome;
-		*prior = L->prior; 
+		*valor = L->nome;
+		*prior = L->prior;
+        *beber = L->beber;
+        *cantar = L->cantar;
+        *fila = L->fila;
 		AUX = L;
 		L = L->link;
 		delete AUX;
@@ -60,7 +65,7 @@ no *removeFP(no *L, char *valor, int * prior) {
 	return L;
 }
 
-int verificaSeVazia(no *L) {
+bool verificaSeVazia(no *L) {
 	if (L == NULL)
 		return 1;
 	else
@@ -70,19 +75,33 @@ int verificaSeVazia(no *L) {
 void exibe(no *L)
 {
     no *P = L;
-    cout << " ";
     while (P != NULL) {
-		cout << "C:" << P->nome << " P:" << P->prior << "|" ;
+		cout << "Nome:" << P->nome;
+        switch(P->prior){
+            case 0:
+                cout << "\t     ||       Prioridade: FIEL (1)"<< endl;
+                break;
+            case 1:
+                cout << "\t     ||       Prioridade: NORMAL (2)"<< endl;
+                break;
+            case 2:
+                cout << "\t     ||       Prioridade: BEBADO (3)"<< endl;
+                break;
+        }
         P = P->link;
     }
+    cout<<endl;
 }
 
-no* insereFilaChegada(no *L, char *valor, enum Prioridades prior) {
+no* insereFilaChegada(no *L, string valor, enum Prioridades prior, bool fila, Gosto beber, Gosto cantar) {
 	no *P, *N;
 
-	N = (no *) malloc (sizeof(no)); 
-	N->nome = valor; 
-	N->prior = prior; 
+	N = new no; 
+	N->nome = valor;
+    N->prior = prior;
+    N->fila = fila;
+    N->beber = beber;
+    N->cantar = cantar;
 	N->link = NULL; 
 	 
 	if (L == NULL){ 
@@ -90,10 +109,14 @@ no* insereFilaChegada(no *L, char *valor, enum Prioridades prior) {
 	}
 	else { 
 		P = L;	
-	
-		while(P->link != NULL) {
-			P = P->link;
+        
+		while(P != NULL) {
+			if(P->link == NULL)
+                break;
+            
+            P = P->link;
 		}
+        
 		P->link = N;
 	} 
 	return L;
