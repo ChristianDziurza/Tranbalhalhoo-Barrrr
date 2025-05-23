@@ -55,9 +55,9 @@ no *removeFP(no *L, string *valor, Prioridades *prior, Gosto *beber, Gosto *cant
 	if (L != NULL) {
 		*valor = L->nome;
 		*prior = L->prior;
-        *beber = L->beber;
-        *cantar = L->cantar;
-        *fila = L->fila;
+        	*beber = L->beber;
+        	*cantar = L->cantar;
+        	*fila = L->fila;
 		AUX = L;
 		L = L->link;
 		delete AUX;
